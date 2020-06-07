@@ -18,6 +18,8 @@ class _MyAppState extends State<MyApp> {
     mapController = controller;
   }
 
+  bool _isEnabled=false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +35,33 @@ class _MyAppState extends State<MyApp> {
             initialCameraPosition: CameraPosition(
               target: _center,
               zoom: 15.0,
+            ),
+          ),
+          //check if location services and app location permissions are enabled
+          //if not display widget for requesting permissions
+          _isEnabled ? Container() :
+          Positioned(
+            bottom: 210,
+            child: SizedBox(
+              height: 60,
+              width: MediaQuery.of(context).size.width,
+              child: Container(
+                color: Colors.blue,
+                child: ListTile(
+                  onTap: (){
+                    //request for location service and permissions
+                  },
+                  title: Text(
+                    "To find your pickup location automatically, turn on location services",
+                    style: TextStyle(color: Colors.white,fontSize: 13.0),
+                  ),
+                  trailing: Icon(
+                    Icons.navigate_next,
+                    size: 20.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ),
           Positioned(
@@ -67,7 +96,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                       padding: EdgeInsets.symmetric(
                           horizontal: 10.0, vertical: 15.0),
-                      color: Color(0xffC0C0C0),
+                      color: Color(0xffDCDCDC),
                     ),
                   ),
                   ListTile(
