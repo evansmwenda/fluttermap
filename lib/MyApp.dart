@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttermap/screens/landing.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 
 class MyApp extends StatefulWidget {
   @override
@@ -36,7 +38,7 @@ class _MyAppState extends State<MyApp> {
           Positioned(
             bottom: 0,
             child: Container(
-              height: 230.0,
+              height: 210.0,
               width: MediaQuery.of(context).size.width,
 //              padding: EdgeInsets.symmetric(horizontal: 20.0),
               decoration: BoxDecoration(
@@ -49,7 +51,9 @@ class _MyAppState extends State<MyApp> {
                     margin:
                         EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     child: FlatButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, LandingScreen.routeName);
+                      },
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
