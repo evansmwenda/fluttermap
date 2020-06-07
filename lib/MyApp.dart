@@ -18,7 +18,71 @@ class _MyAppState extends State<MyApp> {
     mapController = controller;
   }
 
-  bool _isEnabled=false;
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAllPermissions();
+
+  }
+
+  final Location location = Location();
+  bool _serviceEnabled;
+
+  Future<void> _checkService() async {
+    final bool serviceEnabledResult = await location.serviceEnabled();
+    setState(() {
+      _serviceEnabled = serviceEnabledResult;
+    });
+  }
+
+  Future<void> _requestService() async {
+    if (_serviceEnabled == null || !_serviceEnabled) {
+      final bool serviceRequestedResult = await location.requestService();
+      setState(() {
+        _serviceEnabled = serviceRequestedResult;
+      });
+      if (!serviceRequestedResult) {
+        return;
+      }
+    }
+  }
+
+  PermissionStatus _permissionGranted;
+
+  Future<void> _checkPermissions() async {
+    final PermissionStatus permissionGrantedResult =
+    await location.hasPermission();
+    setState(() {
+      _permissionGranted = permissionGrantedResult;
+    });
+  }
+
+  Future<void> _requestPermission() async {
+    if (_permissionGranted != PermissionStatus.granted) {
+      final PermissionStatus permissionRequestedResult =
+      await location.requestPermission();
+      setState(() {
+        _permissionGranted = permissionRequestedResult;
+      });
+      if (permissionRequestedResult != PermissionStatus.granted) {
+        return;
+      }
+    }
+  }
+
+  void _checkAllPermissions(){
+    _checkService();
+    _checkPermissions();
+  }
+  void _requestAllPermissions (){
+    _requestService();
+    _requestPermission();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +101,9 @@ class _MyAppState extends State<MyApp> {
               zoom: 15.0,
             ),
           ),
-          //check if location services and app location permissions are enabled
+          //check if location services & permissions are enabled are enabled
           //if not display widget for requesting permissions
-          _isEnabled ? Container() :
+          _serviceEnabled && _permissionGranted == PermissionStatus.granted ? Container() :
           Positioned(
             bottom: 210,
             child: SizedBox(
@@ -50,6 +114,8 @@ class _MyAppState extends State<MyApp> {
                 child: ListTile(
                   onTap: (){
                     //request for location service and permissions
+                    _requestAllPermissions();
+                    //_requestService();
                   },
                   title: Text(
                     "To find your pickup location automatically, turn on location services",
