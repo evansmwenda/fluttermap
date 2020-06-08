@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttermap/screens/landing.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart' as MyGeoLocator;
 
 class MyApp extends StatefulWidget {
   @override
@@ -11,6 +12,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   GoogleMapController mapController;
   bool _serviceEnabled=false;
+  MyGeoLocator.Position _currentPosition;
+
 
 //  final LatLng _center = const LatLng(45.521563, -122.677433);
   final LatLng _center = const LatLng(-1.2713434, 36.8917778);
@@ -78,6 +81,20 @@ class _MyAppState extends State<MyApp> {
   void _requestAllPermissions (){
     _requestService();
     _requestPermission();
+  }
+
+  void _getCurrentLocation() {
+    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
+
+    geolocator
+        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
+        .then((MyGeoLocator.Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 
 
