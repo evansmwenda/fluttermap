@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:fluttermap/screens/landing.dart';
+import 'package:fluttermap/screens/my_tester.dart';
+import 'package:fluttermap/screens/pick_location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart' as MyGeoLocator;
@@ -146,7 +148,8 @@ class _MyAppState extends State<MyApp> {
         markerId: MarkerId('my_loc'),
         draggable: false,
         onTap: (){},
-        position: LatLng(lat, lon)
+        position: LatLng(lat, lon),
+
     ));
   }
 
@@ -171,6 +174,7 @@ class _MyAppState extends State<MyApp> {
               zoom: 15.8,
             ),
             markers: Set.from(_myMarkers),
+            buildingsEnabled: false,
           ),
           //check if location services & permissions are enabled are enabled
           //if not display widget for requesting permissions
@@ -218,7 +222,7 @@ class _MyAppState extends State<MyApp> {
                         EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
                     child: FlatButton(
                       onPressed: () {
-                        Navigator.pushNamed(context, LandingScreen.routeName);
+                        Navigator.pushNamed(context, PickLocation.routeName);
                       },
                       child: Align(
                         alignment: Alignment.centerLeft,
@@ -255,6 +259,14 @@ class _MyAppState extends State<MyApp> {
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(
+          Icons.location_searching
+        ),
+        onPressed:(){
+          Navigator.pushNamed(context, MyTester.routeName);
+        },
       ),
     );
   }
