@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:fluttermap/screens/landing.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -13,6 +15,34 @@ class _MyAppState extends State<MyApp> {
   GoogleMapController mapController;
   bool _serviceEnabled=false;
   MyGeoLocator.Position _currentPosition;
+  List<Marker> _myMarkers = [];
+
+  LocationData _location;
+  StreamSubscription<LocationData> _locationSubscription;
+  String _error;
+
+  Future<void> _listenLocation() async {
+    _locationSubscription =
+        location.onLocationChanged.handleError((dynamic err) {
+          setState(() {
+            _error = err.code;
+          });
+          _locationSubscription.cancel();
+        }).listen((LocationData currentLocation) {
+          setState(() {
+            _error = null;
+
+            _location = currentLocation;
+            _addMarker(_location.latitude, _location.longitude);
+          });
+        });
+  }
+
+  Future<void> _stopListen() async {
+    _locationSubscription.cancel();
+  }
+
+
 
 
 //  final LatLng _center = const LatLng(45.521563, -122.677433);
@@ -27,6 +57,13 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _checkAllPermissions();
+//    _getCurrentLocation();
+//    _myMarkers.add(Marker(
+//      markerId: MarkerId('my_loc'),
+//      draggable: false,
+//      onTap: (){},
+//      position: LatLng(-1.2713434, 36.8917778)
+//    ));
 
   }
 
@@ -77,6 +114,8 @@ class _MyAppState extends State<MyApp> {
   void _checkAllPermissions(){
     _checkService();
     _checkPermissions();
+    //_listenLocation();
+    _getCurrentLocation();
   }
   void _requestAllPermissions (){
     _requestService();
@@ -84,18 +123,43 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _getCurrentLocation() {
-    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
+//    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
+//
+//    geolocator
+//        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
+//        .then((MyGeoLocator.Position position) {
+//      setState(() {
+//        _currentPosition = position;
+//        _addMarker(_currentPosition.latitude, _currentPosition.longitude);
+//      });
+//    }).catchError((e) {
+//      print(e);
+//    });
 
-    geolocator
-        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
-        .then((MyGeoLocator.Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
-    }).catchError((e) {
-      print(e);
-    });
+
+    var geolocator = MyGeoLocator.Geolocator();
+    var locationOptions = MyGeoLocator.LocationOptions(accuracy: MyGeoLocator.LocationAccuracy.high, distanceFilter: 50);
+
+    geolocator.getPositionStream(locationOptions).listen(
+            (MyGeoLocator.Position position) {
+          print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
+          setState(() {
+            _currentPosition = position;
+            _addMarker(position.latitude ?? -1.27, position.longitude ?? 36.89);
+          });
+        });
   }
+
+  void _addMarker(double lat,double lon){
+    _myMarkers.add(Marker(
+        markerId: MarkerId('my_loc'),
+        draggable: false,
+        onTap: (){},
+        position: LatLng(lat, lon)
+    ));
+  }
+
+
 
 
   @override
@@ -111,9 +175,10 @@ class _MyAppState extends State<MyApp> {
             onMapCreated: _onMapCreated,
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
-              target: _center,
+              target:LatLng(_currentPosition.latitude ?? -1.27, _currentPosition.longitude ?? 36.89),// _center,
               zoom: 15.8,
             ),
+            markers: Set.from(_myMarkers),
           ),
           //check if location services & permissions are enabled are enabled
           //if not display widget for requesting permissions
