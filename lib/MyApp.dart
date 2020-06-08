@@ -10,6 +10,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   GoogleMapController mapController;
+  bool _serviceEnabled=false;
 
 //  final LatLng _center = const LatLng(45.521563, -122.677433);
   final LatLng _center = const LatLng(-1.2713434, 36.8917778);
@@ -17,9 +18,6 @@ class _MyAppState extends State<MyApp> {
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
-
-
-
 
 
   @override
@@ -30,7 +28,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   final Location location = Location();
-  bool _serviceEnabled;
 
   Future<void> _checkService() async {
     final bool serviceEnabledResult = await location.serviceEnabled();
@@ -98,7 +95,7 @@ class _MyAppState extends State<MyApp> {
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
               target: _center,
-              zoom: 15.0,
+              zoom: 15.8,
             ),
           ),
           //check if location services & permissions are enabled are enabled
