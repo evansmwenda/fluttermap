@@ -15,6 +15,10 @@ class _MyAppState extends State<MyApp> {
   GoogleMapController mapController;
   bool _serviceEnabled=false;
   MyGeoLocator.Position _currentPosition;
+  double my_lat;
+  double my_lon;
+  double my_accuracy;
+
   List<Marker> _myMarkers = [];
 
 //  final LatLng _center = const LatLng(45.521563, -122.677433);
@@ -29,6 +33,9 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _checkAllPermissions();
+    my_lat= -1.27;
+    my_lon=36.89;
+    my_accuracy=200.0;
 //    _getCurrentLocation();
 //    _myMarkers.add(Marker(
 //      markerId: MarkerId('my_loc'),
@@ -94,31 +101,44 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _getCurrentLocation() {
-    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
-
-    geolocator
-        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
-        .then((MyGeoLocator.Position position) {
-      setState(() {
-        _currentPosition = position;
-        _addMarker(_currentPosition.latitude, _currentPosition.longitude);
-      });
-    }).catchError((e) {
-      print(e);
-    });
-
-
-//    var geolocator = MyGeoLocator.Geolocator();
-//    var locationOptions = MyGeoLocator.LocationOptions(accuracy: MyGeoLocator.LocationAccuracy.high, distanceFilter: 50);
+    print('running get current location');
+//    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
 //
-//    geolocator.getPositionStream(locationOptions).listen(
-//            (MyGeoLocator.Position position) {
-//          print(position == null ? 'Unknown' : position.latitude.toString() + ', ' + position.longitude.toString());
-//          setState(() {
-//            _currentPosition = position;
-//            _addMarker(position.latitude ?? -1.27, position.longitude ?? 36.89);
-//          });
-//        });
+//    geolocator
+//        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
+//        .then((MyGeoLocator.Position position) {
+//      setState(() {
+//        _currentPosition = position;
+//        my_lat=_currentPosition.latitude;
+//        my_lon=_currentPosition.longitude;
+//        _addMarker(_currentPosition.latitude, _currentPosition.longitude);
+//      });
+//    }).catchError((e) {
+//      print(e);
+//    });
+
+
+    var geolocator = MyGeoLocator.Geolocator();
+    var locationOptions = MyGeoLocator.LocationOptions(accuracy: MyGeoLocator.LocationAccuracy.high, distanceFilter: 10);
+
+    geolocator.getPositionStream(locationOptions).listen(
+            (MyGeoLocator.Position position) {
+          print(position == null ? 'Unknown' : "defcon:"+position.latitude.toString() + ',\t ' + position.longitude.toString()+'\tcurrent_accuracy: '+my_accuracy.toString()+'\tnew_accuracy: '+position.accuracy.toString());
+          //check if new accuracy is better than current accuracy before updating the map
+          if(position.accuracy < my_accuracy){
+            //update the map
+            print("defcon:found better coordinates");
+            setState(() {
+              _currentPosition = position;
+              my_lat=_currentPosition.latitude;
+              my_lon=_currentPosition.longitude;
+              my_accuracy=_currentPosition.accuracy;//update the accuracy
+              _addMarker(position.latitude, position.longitude);
+            });
+          }
+
+
+        });
   }
 
   void _addMarker(double lat,double lon){
@@ -142,11 +162,12 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Stack(
         children: <Widget>[
+          //if current position null display placeholder map
           GoogleMap(
             onMapCreated: _onMapCreated,
             mapType: MapType.normal,
             initialCameraPosition: CameraPosition(
-              target:LatLng(_currentPosition.latitude ?? -1.27, _currentPosition.longitude ?? 36.89),// _center,
+              target:LatLng(my_lat, my_lon),// _center,
               zoom: 15.8,
             ),
             markers: Set.from(_myMarkers),
