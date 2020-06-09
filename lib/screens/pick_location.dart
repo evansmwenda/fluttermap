@@ -11,7 +11,7 @@ class PickLocation extends StatefulWidget {
 
 class _PickLocationState extends State<PickLocation> {
 
-  static const kGoogleApiKey = "AIzaSyDovrsN0ygji5HHmdhtWQnnOoPVFnZRVLc";
+  static const kGoogleApiKey = "AIzaSyAd5EOYfloEJEkw93lrZ5hY6NF7guf9x9M";
 
 // to get places detail (lat/lng)
   GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);

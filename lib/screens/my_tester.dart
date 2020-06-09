@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 
-const kGoogleApiKey = "AIzaSyDovrsN0ygji5HHmdhtWQnnOoPVFnZRVLc";
+const kGoogleApiKey = "AIzaSyAd5EOYfloEJEkw93lrZ5hY6NF7guf9x9M";
 
 // to get places detail (lat/lng)
 GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
@@ -85,8 +85,8 @@ class _MyTesterState extends State<MyTester> {
       apiKey: kGoogleApiKey,
       onError: onError,
       mode: _mode,
-      language: "fr",
-      components: [Component(Component.country, "fr")],
+      language: "en",
+      components: [Component(Component.country, "ke")],
     );
 
     displayPrediction(p, homeScaffoldKey.currentState);

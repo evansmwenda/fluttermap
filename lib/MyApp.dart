@@ -104,43 +104,45 @@ class _MyAppState extends State<MyApp> {
 
   void _getCurrentLocation() {
     print('running get current location');
-//    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
+    final MyGeoLocator.Geolocator geolocator = MyGeoLocator.Geolocator()..forceAndroidLocationManager;
 //
-//    geolocator
-//        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
-//        .then((MyGeoLocator.Position position) {
-//      setState(() {
-//        _currentPosition = position;
-//        my_lat=_currentPosition.latitude;
-//        my_lon=_currentPosition.longitude;
-//        _addMarker(_currentPosition.latitude, _currentPosition.longitude);
-//      });
-//    }).catchError((e) {
-//      print(e);
-//    });
+    geolocator
+        .getCurrentPosition(desiredAccuracy: MyGeoLocator.LocationAccuracy.best)
+        .then((MyGeoLocator.Position position) {
+      setState(() {
+        _currentPosition = position;
+        my_lat=_currentPosition.latitude;
+        my_lon=_currentPosition.longitude;
+        _addMarker(_currentPosition.latitude, _currentPosition.longitude);
+      });
+    }).catchError((e) {
+      print(e);
+    });
 
-
-    var geolocator = MyGeoLocator.Geolocator();
-    var locationOptions = MyGeoLocator.LocationOptions(accuracy: MyGeoLocator.LocationAccuracy.high, distanceFilter: 10);
-
-    geolocator.getPositionStream(locationOptions).listen(
-            (MyGeoLocator.Position position) {
-          print(position == null ? 'Unknown' : "defcon:"+position.latitude.toString() + ',\t ' + position.longitude.toString()+'\tcurrent_accuracy: '+my_accuracy.toString()+'\tnew_accuracy: '+position.accuracy.toString());
-          //check if new accuracy is better than current accuracy before updating the map
-          if(position.accuracy < my_accuracy){
-            //update the map
-            print("defcon:found better coordinates");
-            setState(() {
-              _currentPosition = position;
-              my_lat=_currentPosition.latitude;
-              my_lon=_currentPosition.longitude;
-              my_accuracy=_currentPosition.accuracy;//update the accuracy
-              _addMarker(position.latitude, position.longitude);
-            });
-          }
-
-
-        });
+    /***
+     * UNCOMMENT THIS FOR ACTIVE LOCATION TRACKING
+     */
+//    var geolocator = MyGeoLocator.Geolocator();
+//    var locationOptions = MyGeoLocator.LocationOptions(accuracy: MyGeoLocator.LocationAccuracy.high, distanceFilter: 10);
+//
+//    geolocator.getPositionStream(locationOptions).listen(
+//            (MyGeoLocator.Position position) {
+//          print(position == null ? 'Unknown' : "defcon:"+position.latitude.toString() + ',\t ' + position.longitude.toString()+'\tcurrent_accuracy: '+my_accuracy.toString()+'\tnew_accuracy: '+position.accuracy.toString());
+//          //check if new accuracy is better than current accuracy before updating the map
+//          if(position.accuracy < my_accuracy){
+//            //update the map
+//            print("defcon:found better coordinates");
+//            setState(() {
+//              _currentPosition = position;
+//              my_lat=_currentPosition.latitude;
+//              my_lon=_currentPosition.longitude;
+//              my_accuracy=_currentPosition.accuracy;//update the accuracy
+//              _addMarker(position.latitude, position.longitude);
+//            });
+//          }
+//
+//
+//        });
   }
 
   void _addMarker(double lat,double lon){
